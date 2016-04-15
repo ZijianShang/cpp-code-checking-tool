@@ -182,6 +182,21 @@ def checkMemoryDeallocate(line, file, line_number, warnings):
     else:
         return 0
 
+def checkComparison(line, file, line_number, errors):
+    pattern = r'(==|!=)\s*(\w+)'
+    pattern_matched = re.search(pattern, line)
+    if pattern_matched is not None:
+        operator, value = pattern_matched.group(1), pattern_matched.group(2)
+        if value in ("nullptr") or value.isdigit() or value.isupper():
+            error = "{0}\nERROR: {1}: line: {2}: Put {4} to the left of {3} operator to avoid incorrect assignment"\
+            .format(line, file, line_number, operator, value)
+            errors.append(error)
+            return 1
+        else:
+            return 0
+    else:
+        return 0
+
 
 def checking():
     cpp_changes = attactCPPDiffLines()
@@ -194,7 +209,8 @@ def checking():
                            checkInline,
                            checkDefine,
                            checkTab,
-                           checkElse]
+                           checkElse,
+                           checkComparison]
 
     warning_function_list = [checkEmptyLine,
                              checkLen,
