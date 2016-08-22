@@ -242,6 +242,7 @@ def printResult(warnings, errors):
 
 def main():
     printResult(*checking())
+    print "\nChecking completed.\n"
 
 if __name__ == '__main__':
     main()
